@@ -1,5 +1,8 @@
 from scipy import stats
 from pathlib import Path
+import numpy
+import matplotlib.pyplot as plt
+from sympy.physics.units import common_years
 
 SCRIPT_DIR = Path(__file__).parent
 COUNTRIES=SCRIPT_DIR.joinpath('Countries').glob('*')
@@ -63,7 +66,7 @@ def getMeanGDP(project_directory : Path, election_years : list, country_tag) -> 
             line = GDP_file.readline().strip().split("\",\"")
 
         line[0] = line[0].replace("\"", "")
-        line[-1] = line[-1].replace("\"", "")
+        line[-1] = line[-1].replace("\",", "")
 
         interval_GDP = {}
         last_election_year = election_years[0] - BASE_GAP
@@ -90,13 +93,23 @@ def getMeanGDP(project_directory : Path, election_years : list, country_tag) -> 
         return interval_GDP
 
 
+def plotGraphGrowthToPopularity(country_tag : str, economic_growth : numpy.array, ideology_popularity : numpy.array, slope : numpy.float64, intercept : numpy.float64):
+    plt.title(f"Economic growth to ideologic popularity - {country_tag}")
+    plt.xlabel("Averaged Yearly Growth - %")
+    plt.ylabel("Popularity of Parties - %")
+    plt.scatter(economic_growth, ideology_popularity, color="blue")
+    plt.plot(economic_growth, economic_growth * float(slope) + float(intercept), color="red", label=f"y = x*{round(slope, 2)} + {round(intercept,2)}")
+    plt.legend()
+    plt.savefig(f"./graphs/{country_tag}.png")
+    plt.show()
 
-def findCorrelation(ideological_performance : dict[int, float], economic_performance : dict[int, float]):
-    economy = []
-    performances = []
-    for year in economic_performance:
-        economy.append(economic_performance[year])
-        performances.append(ideological_performance[year])
+
+
+
+def findCorrelation(ideological_performance : dict[int, float], economic_performance : dict[int, float], country_tag : str):
+    common_keys = sorted(set(economic_performance.keys()).union(ideological_performance.keys()))
+    economy = numpy.array([economic_performance[year] for year in common_keys])
+    performances = numpy.array([ideological_performance[year] for year in common_keys])
 
     slope, intercept, r_value, p_value, std_err = stats.linregress(economy, performances)
 
@@ -104,17 +117,24 @@ def findCorrelation(ideological_performance : dict[int, float], economic_perform
     print("R squared:", r_value ** 2)
     print("P-value:", p_value)
 
+    plotGraphGrowthToPopularity(country_tag, economy, performances, slope, intercept)
 
-watched_ideologies = getFocusedIdeologies(SCRIPT_DIR)
 
 
-for c in COUNTRIES:
-    ideologies = getElections(c, watched_ideologies)
 
-    years = list(ideologies.keys())
-    years.sort()
 
-    growth = getMeanGDP(SCRIPT_DIR, years, getCountryTag(c))
+if __name__ == "__main__":
+    watched_ideologies = getFocusedIdeologies(SCRIPT_DIR)
 
-    findCorrelation(ideologies, growth)
+    for c in COUNTRIES:
+        tag = getCountryTag(c)
+        print("Country tag:", tag)
+        ideologies = getElections(c, watched_ideologies)
 
+        years = list(ideologies.keys())
+        years.sort()
+
+        growth = getMeanGDP(SCRIPT_DIR, years, tag)
+
+        findCorrelation(ideologies, growth, tag)
+        print()

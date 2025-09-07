@@ -9,7 +9,7 @@ As for GDP growth, I looked at yearly growth rates of a country from year 1998+,
 Data Collection
 ---
 Data about parties popularity in each election were hand collected from Wikipedia, because Wikidata ended up unfit for the region of central Europe. Data about parties is also better hand-picked because of the small scale of this project and the volutility of parties in the early 2000s. Data is stored separately for each country, each election year and is in .csv format, where one can find party name abbreviation, main ideology and percentage aquired in that given election. 
-Data is therefore collected for further analysis by a python script, which looks for all countries in ``Countries/`` directory, then for each election year to process the data. Parties are then segregated into a group belonging to targeted ideologies, which are taken from ``data/ideologies.csv`` file.
+This data is collected for further analysis by a python script, which looks for all countries in ``Countries/`` directory, then for each election year to process the data. Parties are then segregated into a group belonging to targeted ideologies, which are taken from ``data/ideologies.csv`` file.
 
 ```py
 def getElections(country : Path, focused_ideologies : set) -> dict[int, float]:
@@ -85,7 +85,7 @@ def getMeanGDP(project_directory : Path, election_years : list, country_tag) -> 
 
 Data analysis
 ---
-To ascertain, whether there is a correlation between yearly GDP growth and the popularity of populist/nationalist/communist parties, I used linear regression. Therefore, we can set out null hypothesis to slope being zero and alternate hypothesis saying there is a link between these two phenomena. To do this linear regression, I used python library ``scipy``. 
+To ascertain, whether there is a correlation between yearly GDP growth and the popularity of populist/nationalist/communist parties, I used linear regression. Thus we can set out null hypothesis to slope being zero and an alternate hypothesis saying there is a link between these two phenomena. To do this linear regression, I used python library ``scipy``. 
 
 ```py
 def findCorrelation(ideological_performance : dict[int, float], economic_performance : dict[int, float]):
@@ -102,10 +102,37 @@ def findCorrelation(ideological_performance : dict[int, float], economic_perform
     print("P-value:", p_value)
 ```
 
-We get a linear function of ``ideological_performance = -2.3 * GDP_growth + 58.29``. **49,96%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). Given that p value is 0.116, which is bigger than 0.05, we cant be completely sure that the slope is actually determined by the GDP and not just attributed to pure chance.
+Czech Republic
+---
+We get a linear function of ``ideological_performance = -2.31 * GDP_growth + 58.29``. **49,96%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.116``.\
+![CZE_graph](./graphs/CZE.png)
+
+Slovak Republic
+---
+We get a linear function of ``ideological_performance = -2.52 * GDP_growth + 65.02``. **36,2%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.153``.\
+![SVK_graph](./graphs/SVK.png)
+
+Austria
+---
+We get a linear function of ``ideological_performance = -5.51 * GDP_growth + 32.01``. **44,99%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.099``.\
+![AUT_graph](./graphs/AUT.png)
+
+Conclusion
+---
+We can clearly see that there is a relationship between a higher averaged yearly growth rate and a smaller percentage of votes for parties with populist/nationalist/communist ideologies. Therefore confirming our alternate hypothesis. 
+
+(More on p values in Discussion)
 
 Discussion
 ---
-Given the nature of politics, simply boxing together parties with differing economic policy even though they share the same populistic tendency may not guarantee good result. But the idea of this project was to group together ideologies, which are attractive to people in poorer households. Also a thing that has to be mentioned is that there is populism and there is good campaigning. It often makes sense to try to appeal to a broader electoral base by distancing yourself from your political opponents. So a line had to be drawn and in this case it was a few random editors of wikipedia and lastly me. Therefore a grain of salt in identifying the parties might and is encouraged to be taken. 
 
-In conclussion, my analysis shows a correlation between the health of an economy and popularity of populism, but it all lies in the identification of the party ideologies.
+We observed higher than desired p values for each country we analysed. Whis value can be attributed to a small sample rate, for which I decided because of the chaotic situation in Czech and Slovak republic in the 90'. The reason why I decided not to account for these p values is because we can observe this phenomenon in 3 different countries with very different economic and political situations.
+
+Another point of contention may be my categorisation of political parties, where I:
+1. (SR) Judged SMER as populist from their creation
+2. (CZ) Assigned CSSD left-wing populism ideology
+3. (CZ) Judged ANO as technocratic populist in 2013 elections
+4. Generally assigned right-wing populism ideology when the parties were also nationalist (nationalist ideology was also in the focus group)
+5. Some small paries were harder to ideologically pinpoint because of their short lifespan.
+
+
