@@ -104,17 +104,17 @@ def findCorrelation(ideological_performance : dict[int, float], economic_perform
 
 Czech Republic
 ---
-We get a linear function of ``popularity_of_parties = -2.31 * GDP_growth + 58.29``. **49,96%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.116``.\
+We get a linear function of ``popularity_of_parties = -2.31 * GDP_growth + 58.29``, where popularity_of_parties is the sum of percentages achieved by parties in the focus group. **49,96%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.116``.\
 ![CZE_graph](./graphs/CZE.png)
 
 Slovak Republic
 ---
-We get a linear function of ``popularity_of_parties = -2.52 * GDP_growth + 65.02``. **36,2%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.153``.\
+We get a linear function of ``popularity_of_parties = -2.52 * GDP_growth + 65.02``, where popularity_of_parties is the sum of percentages achieved by parties in the focus group. **36,2%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.153``.\
 ![SVK_graph](./graphs/SVK.png)
 
 Austria
 ---
-We get a linear function of ``popularity_of_parties = -5.51 * GDP_growth + 32.01``. **44,99%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.099``.\
+We get a linear function of ``popularity_of_parties = -5.51 * GDP_growth + 32.01``, where popularity_of_parties is the sum of percentages achieved by parties in the focus group. **44,99%** of the variance in ideological popularity can be attributed to the yearly GDP growth (R^2 value). P value being ``0.099``.\
 ![AUT_graph](./graphs/AUT.png)
 
 Conclusion
